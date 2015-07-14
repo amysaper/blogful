@@ -51,9 +51,8 @@ def add_post_get():
 
 @app.route("/post/<id>")
 #@app.route(url_for {{post.title}})
-def view_post():
+def view_post(id = id):
     id = id 
-    print id
     #post.title = redirect(url_for ("post/<id>"))
     return render_template("posts.html",
     id = id
