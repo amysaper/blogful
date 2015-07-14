@@ -50,10 +50,8 @@ def add_post_get():
     return render_template("add_post.html")
 
 @app.route("/post/<id>")
-#@app.route(url_for {{post.title}})
 def view_post(id = id):
-    id = id 
-    #post.title = redirect(url_for ("post/<id>"))
+    posts = session.query(Post).filter(Post.id == id)
     return render_template("posts.html",
-    id = id
+        posts=posts,
     )
