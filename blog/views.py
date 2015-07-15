@@ -73,3 +73,19 @@ def view_post(id = id):
     return render_template("posts.html",
         posts=posts,
     )
+
+@app.route("/post/<id>/delete") 
+def delete_post_get(id = id):
+    post = session.query(Post).get(id)
+    return render_template("delete_post.html",
+        post=post,
+    )
+
+@app.route("/post/<id>/delete", methods=["POST"])
+def delete_post_post(id = id):
+    deleted_posts = session.query(Post).get(id)
+    session.delete(deleted_posts)
+    session.commit()
+    return redirect(url_for("posts")) 
+    
+    

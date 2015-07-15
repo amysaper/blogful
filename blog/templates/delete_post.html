@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+    Delete Post
+</h1>
+<form role="form" method="POST">
+    <button class="btn btn-default" type="submit" <a href="url_for('posts')"> Confirm Delete </a> </button>
+</form>
+    <button class="btn btn-default" type="submit" </button> <a href="{{ url_for('posts')}}"> Cancel </a> 
+
+{% endblock %}
