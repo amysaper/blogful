@@ -48,6 +48,24 @@ def posts(page=1, paginate_by=10):
 @app.route("/post/add", methods=["GET"])
 def add_post_get():
     return render_template("add_post.html")
+    
+@app.route("/post/<id>/edit", methods=["GET"])
+def edit_post_get(id = id):
+    posts = session.query(Post).filter(Post.id == id)
+    return render_template("edit_post.html",
+        post = posts[0],
+    )
+ 
+@app.route("/post/<id>/edit", methods=["POST"])
+def edit_post_post(id = id):
+    post = Post(
+        title=request.form["title"],
+        content=mistune.markdown(request.form["content"]),
+    )
+    session.add(post)
+    session.commit()
+    return redirect(url_for("posts"))   
+
 
 @app.route("/post/<id>")
 def view_post(id = id):

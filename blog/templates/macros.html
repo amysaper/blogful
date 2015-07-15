@@ -4,6 +4,7 @@
         <ul class="list-unstyled">
             <li>
                 {{ post.datetime | dateformat("%d/%m/%y") }}
+                   <a href="post/{{post.id}}/edit"> Edit </a>
             </li>
         </ul>
     </div>
