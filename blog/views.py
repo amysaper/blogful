@@ -7,8 +7,10 @@ from .models import Post
 
 import mistune
 from flask import request, redirect, url_for
+from flask.ext.login import login_required
 
 @app.route("/post/add", methods=["POST"])
+@login_required
 def add_post_post():
     post = Post(
         title=request.form["title"],
@@ -46,6 +48,7 @@ def posts(page=1, paginate_by=10):
     )
 
 @app.route("/post/add", methods=["GET"])
+@login_required
 def add_post_get():
     return render_template("add_post.html")
     
@@ -57,6 +60,7 @@ def edit_post_get(id = id):
     )
  
 @app.route("/post/<id>/edit", methods=["POST"])
+@login_required
 def edit_post_post(id = id):
     post = Post(
         title=request.form["title"],
@@ -74,7 +78,8 @@ def view_post(id = id):
         posts=posts,
     )
 
-@app.route("/post/<id>/delete") 
+@app.route("/post/<id>/delete")
+@login_required
 def delete_post_get(id = id):
     post = session.query(Post).get(id)
     return render_template("delete_post.html",
@@ -82,10 +87,30 @@ def delete_post_get(id = id):
     )
 
 @app.route("/post/<id>/delete", methods=["POST"])
+@login_required
 def delete_post_post(id = id):
     deleted_posts = session.query(Post).get(id)
     session.delete(deleted_posts)
     session.commit()
     return redirect(url_for("posts")) 
     
-    
+@app.route("/login", methods=["GET"])
+def login_get():
+    return render_template("login.html")
+
+from flask import flash
+from flask.ext.login import login_user
+from werkzeug.security import check_password_hash
+from .models import User
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    email = request.form["email"]
+    password = request.form["password"]
+    user = session.query(User).filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        flash("Incorrect username or password", "danger")
+        return redirect(url_for("login_get"))
+
+    login_user(user)
+    return redirect(request.args.get('next') or url_for("posts"))

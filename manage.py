@@ -5,6 +5,8 @@ from blog import app
 from blog.models import Post
 from blog.database import session
 
+
+
 manager = Manager(app)
 
 @manager.command
@@ -25,5 +27,29 @@ def seed():
     session.commit()
 
 
+from getpass import getpass
+
+from werkzeug.security import generate_password_hash
+
+from blog.models import User
+@manager.command
+def adduser():
+    name = raw_input("Name: ")
+    email = raw_input("Email: ")
+    if session.query(User).filter_by(email=email).first():
+        print "User with that email address already exists"
+        return
+
+    password = ""
+    password_2 = ""
+    while not (password and password_2) or password != password_2:
+        password = getpass("Password: ")
+        password_2 = getpass("Re-enter password: ")
+    user = User(name=name, email=email,
+                password=generate_password_hash(password))
+    session.add(user)
+    session.commit()
+
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
     manager.run()
