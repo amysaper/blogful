@@ -72,11 +72,10 @@ def edit_post_get(id = id):
 @login_required
 def edit_post_post(id = id):
     post = session.query(Post).get(id)
+
     if current_user.id== post.author.id: 
-        post = Post(
-            title=request.form["title"],
-            content=mistune.markdown(request.form["content"]),
-        )
+        post.title = request.form["title"]
+        post.content = mistune.markdown(request.form["content"])
         session.add(post)
         session.commit()
         return redirect(url_for("posts"))  
