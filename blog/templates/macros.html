@@ -1,11 +1,14 @@
-{% macro render_post(post) %}
+{% macro render_post(post) %} <!-- passing in current_user as a parameter...why is it still undefined?? -->
 <div class="row">
     <div class="col-md-2 text-right metadata">
         <ul class="list-unstyled">
             <li>
                 {{ post.datetime | dateformat("%d/%m/%y") }}
+                    {% if current_user.is_authenticated() and current_user.id == post.author.id%}
+                    <p> current user is {{current_user.name}}</p>
                    <a href="post/{{post.id}}/edit"> Edit </a>
                    <a href="post/{{post.id}}/delete"> Delete </a>
+                       {% endif %}
             </li>
         </ul>
     </div>
@@ -13,6 +16,10 @@
         <h1>
             <a href="post/{{post.id}}"> {{post.title}} </a>
         </h1>
+        <h2>
+           by {{ post.author.name }} 
+        </h2>
+        
         {{ post.content | safe }}
     </div>
 </div>
