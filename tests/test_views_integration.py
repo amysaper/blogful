@@ -67,9 +67,36 @@ class TestViews(unittest.TestCase):
         #test to ensure that post still exists
         posts = session.query(models.Post).all()
         self.assertEqual(len(posts), 1)
+    
+    #test to ensure users cannot delete posts they didn't authot
+    def test_delete_post_notmine(self):
+        test_post = models.Post(
+            title="Unit Test Post #{}",
+            content= "unit testing" 
+        )
+        self.simulate_login()
+        session.add(test_post)
+        session.commit()
+        post_id = test_post.id
+        response = self.client.post("/post/{}/delete".format(post_id))
+        #test to ensure that post still exists
+        posts = session.query(models.Post).all()
+        self.assertEqual(len(posts), 1)
         
-        
-        
+    #test to ensure user can delete their own posts
+    def test_delete_post_mine(self):
+        test_post = models.Post(
+            title="Unit Test Post #{}",
+            content= "unit testing", author_id = self.user.id
+        )
+        self.simulate_login()
+        session.add(test_post)
+        session.commit()
+        post_id = test_post.id
+        response = self.client.post("/post/{}/delete".format(post_id))
+        #test to ensure that post no longer exists
+        posts = session.query(models.Post).all()
+        self.assertEqual(len(posts), 0)    
         
 if __name__ == "__main__":
     unittest.main()
